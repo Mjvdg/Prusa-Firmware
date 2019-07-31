@@ -6473,6 +6473,11 @@ static void lcd_main_menu()
   {
     MENU_ITEM_SUBMENU_P(_i("Preheat"), lcd_preheat_menu);////MSG_PREHEAT
   }
+  if ( is_usb_printing )
+  {
+	   MENU_ITEM_SUBMENU_P(_i("Octo"), lcd_octo_menu);////MSG_OCTO c=0 r=0
+  }
+  
 
 #ifdef SDSUPPORT
   if (card.cardOK || lcd_commands_type == LCD_COMMAND_V2_CAL)
@@ -6780,6 +6785,57 @@ static void lcd_mesh_bed_leveling_settings()
 	MENU_END();
 	//SETTINGS_MBL_MODE;
 }
+
+static void lcd_octo_cmd_pause() {
+	
+	SERIAL_ECHOLN("Pause printing mjvdg");
+	//lcd_return_to_status();
+	
+}
+
+static void lcd_octo_cmd_stop() {
+	
+	SERIAL_ECHOLN("Stop printing mjvdg");
+	//lcd_return_to_status();
+}
+
+
+static void lcd_octo_menu()
+{
+	typedef struct
+	{
+	    menu_data_edit_t reserved; //!< reserved for number editing functions
+		int8_t  status; //!< To recognize, whether the menu has been just initialized.
+		//! Backup of extrudemultiply, to recognize, that the value has been changed and
+		//! it needs to be applied.
+		int16_t extrudemultiply;
+	} _menu_data_t;
+	static_assert(sizeof(menu_data)>= sizeof(_menu_data_t),"_menu_data_t doesn't fit into menu_data");
+	_menu_data_t* _md = (_menu_data_t*)&(menu_data[0]);
+	if (_md->status == 0)
+	{
+		// Menu was entered. Mark the menu as entered and save the current extrudemultiply value.
+		_md->status = 1;
+		_md->extrudemultiply = extrudemultiply;
+	}
+	else if (_md->extrudemultiply != extrudemultiply)
+	{
+		// extrudemultiply has been changed from the child menu. Apply the new value.
+		_md->extrudemultiply = extrudemultiply;
+	}
+
+ // EEPROM_read(EEPROM_SILENT, (uint8_t*)&SilentModeMenu, sizeof(SilentModeMenu));
+
+
+
+	MENU_BEGIN();
+	MENU_ITEM_BACK_P(_T(MSG_MAIN)); //1
+	MENU_ITEM_FUNCTION_P(_T(MSG_PAUSE_PRINT), lcd_octo_cmd_pause);//7
+	MENU_ITEM_FUNCTION_P(_T(MSG_STOP_PRINT), lcd_octo_cmd_stop);
+	MENU_END();
+}
+
+
 
 static void lcd_control_temperature_menu()
 {
