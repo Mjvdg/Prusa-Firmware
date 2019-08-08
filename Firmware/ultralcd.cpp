@@ -6788,15 +6788,22 @@ static void lcd_mesh_bed_leveling_settings()
 
 static void lcd_octo_cmd_pause() {
 	
-	SERIAL_ECHOLN("Pause printing mjvdg");
-	//lcd_return_to_status();
+	SERIAL_ECHOLN("action:pause");
+	
+	
+}
+
+static void lcd_octo_cmd_resume() {
+	
+	SERIAL_ECHOLN("action:resume");
+	
 	
 }
 
 static void lcd_octo_cmd_stop() {
 	
-	SERIAL_ECHOLN("Stop printing mjvdg");
-	//lcd_return_to_status();
+	SERIAL_ECHOLN("action:cancel");
+	
 }
 
 
